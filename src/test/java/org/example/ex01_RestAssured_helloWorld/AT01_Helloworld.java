@@ -3,7 +3,7 @@ package org.example.ex01_RestAssured_helloWorld;
 import io.restassured.RestAssured;
 import org.testng.annotations.Test;
 
-public class Helloworld {
+public class AT01_Helloworld {
     @Test
     public void TestHelloWold() {
 
