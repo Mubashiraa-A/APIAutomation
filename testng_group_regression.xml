@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="All Test Suite">
+    <test verbose="2" preserve-order="true" name="C:/Users/pc/Selennium Automation Projects\API-RestAssureFramework">
+
+        <groups>
+            <run>
+                <include name="regression">
+                </include>
+            </run>
+        </groups>
+
+        <classes>
+            <class name="org.example.ex04_RS_TestNG_advance.AP014_TestNG_Groups">
+            </class>
+        </classes>
+
+    </test>
+</suite>
