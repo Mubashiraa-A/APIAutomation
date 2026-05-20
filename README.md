@@ -1,4 +1,4 @@
-# ATB15x - API Automation with Rest Assured & TestNG
+# API Automation with Rest Assured & TestNG
 
 > **A comprehensive, hands-on course for mastering API Test Automation using Java, Rest Assured, and TestNG**
 
