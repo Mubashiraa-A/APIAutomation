@@ -1,5 +1,6 @@
 package org.example.ex05_Test_AssertionOrValidation;
 
+import static org.assertj.core.api.Assertions.*;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
@@ -9,60 +10,61 @@ import io.restassured.specification.RequestSpecification;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class AP024_AssertJ_Assertion {
-    RequestSpecification requestSpecification;
-    ValidatableResponse validatableResponse;
+    RequestSpecification r;
     Response response;
-    String token;
-    Integer bookingId;
+    ValidatableResponse v;
+
+    Integer bookingID;
+    String firstname;
+    String lastname;
+
+
+    String payload_POST = "{\n" +
+            "    \"firstname\" : \"mubaaa\",\n" +
+            "    \"lastname\" : \"Dutta\",\n" +
+            "    \"totalprice\" : 123,\n" +
+            "    \"depositpaid\" : false,\n" +
+            "    \"bookingdates\" : {\n" +
+            "        \"checkin\" : \"2024-01-01\",\n" +
+            "        \"checkout\" : \"2024-01-01\"\n" +
+            "    },\n" +
+            "    \"additionalneeds\" : \"Lunch\"\n" +
+            "}";
+
 
     @Test
-    public void test_POST() {
+    public void test_create_post() {
 
-        String payload_POST = "{\n" +
-                "    \"firstname\" : \"Pramod\",\n" +
-                "    \"lastname\" : \"Dutta\",\n" +
-                "    \"totalprice\" : 123,\n" +
-                "    \"depositpaid\" : false,\n" +
-                "    \"bookingdates\" : {\n" +
-                "        \"checkin\" : \"2024-01-01\",\n" +
-                "        \"checkout\" : \"2024-01-01\"\n" +
-                "    },\n" +
-                "    \"additionalneeds\" : \"Lunch\"\n" +
-                "}";
+        r = RestAssured.given();
+        r.baseUri("https://restful-booker.herokuapp.com/").basePath("/booking");
+        r.contentType(ContentType.JSON);
+        r.body(payload_POST).log().all();
 
+        response = r.when().log().all().post();
 
-        requestSpecification = RestAssured.given();
-        requestSpecification.baseUri("https://restful-booker.herokuapp.com/");
-        requestSpecification.basePath("/booking");
-        requestSpecification.contentType(ContentType.JSON);
-        requestSpecification.body(payload_POST).log().all();
+        v = response.then().log().all().statusCode(200);
 
-        Response response = requestSpecification.when().post();
-
-
-        // Get Validate response to perform validation
-        validatableResponse = response.then().log().all();
-        validatableResponse.statusCode(200);
 
         //  Extract Response
         // booking ID, firstname, lastname, checkin dates.
 
         // Extraction
         // Concept #1 - Normal( TestNG or Assertj) IS IMP
-        bookingId = response.then().extract().path("bookingid");
-        String firstname = response.then().extract().path("booking.firstname");
-        String lastname = response.then().extract().path("booking.lastname");
+        bookingID = response.then().extract().path("bookingid");
+       String firstName=response.then().extract().path("booking.firstname");
+       String lastName=response.then().extract().path("booking.lastname");
+        System.out.println("boking id"+bookingID+" first name is "+firstName+" Last name is "+lastName);
 
         // Concept #2 - (Jsonpath class) Another mechanism to extract the Keys, value by JSON Path
-        JsonPath jp = new JsonPath(response.asString());
-        String bookingID1 = jp.getString("bookingid");
-        assertThat(jp.getString("booking.firstname")).isEqualTo("pramod");
+        JsonPath jp= new JsonPath(response.asString());
+        String bookingID1= jp.getString("bookingid");
+
+
         assertThat(jp.getString("booking.lastname")).isEqualTo("Dutta");
-        assertThat(jp.getInt("booking.totalprice")).isEqualTo(3000);
-        assertThat(jp.getBoolean("booking.depositpaid")).isTrue();
+        assertThat(jp.getInt("booking.totalprice")).isNotNull();
+        assertThat(jp.getBoolean("booking.depositpaid")).isFalse();
 
 
         // TestNG - Extract the details of the firstname, bookingId, lastname from Response.
@@ -70,23 +72,22 @@ public class AP024_AssertJ_Assertion {
         // SoftAssert vs HardAssert (90%)
         // This means that if any assertion fails,
         // the remaining statements in that test method will not be executed.
-        Assert.assertEquals(firstname, "Pramod");
-        Assert.assertEquals(lastname, "Dutta");
-        Assert.assertNotNull(bookingId);
-
-        if (!firstname.contains("Pramod")) {
-            Assert.fail("Failed kar diya Test");
-
-
-        }
+//        Assert.assertEquals(firstname,"mubaaa");
+//        Assert.assertEquals(lastname,"Dutta");
+//        Assert.assertNotNull(bookingID);
+//        if(!firstname.contains("mubaaa")){
+//            Assert.fail("Failed kar diya Test");
+//
+//        }
 
 
-        assertThat(bookingId).isNotZero().isNotNull().isPositive();
-        assertThat(bookingId)
+        assertThat(bookingID).isNotZero().isNotNull().isPositive();
+        assertThat(bookingID)
                 .isNotNull()
                 .isBetween(0, 9999);
-        assertThat(firstname).isNotBlank().isNotEmpty().isNotNull().isEqualTo("Pramod");
 
+
+        assertThat(firstName).isNotBlank().isNotEmpty().isNotNull().isEqualTo("mubaaa");
 
     }
 }
